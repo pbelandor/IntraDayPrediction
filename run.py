@@ -98,10 +98,16 @@ try:
 			fieldnames=['NIFTY','Date','Time','Open','High','Low','Close']
 			writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
 			writer.writeheader()
-			for KV in r.hscan_iter("nw##SMA(5)"):
-				value = KV[1].decode('ascii')
-				d = value.split(',')
-				writer.writerow({'NIFTY': d[0],'Date': d[1],'Time': d[2], 'Open': d[3],'High': d[4], 'Low': d[5],'Close': d[6]})
+			try:
+				for KV in r.hscan_iter("nw##SMA(5)"):
+					value = KV[1].decode('ascii')
+					d = value.split(',')
+					writer.writerow({'NIFTY': d[0],'Date': d[1],'Time': d[2], 'Open': d[3],'High': d[4], 'Low': d[5],'Close': d[6]})
+			except:
+				print("Error: \tData inconsistent \n\tRe-fetching in 20 seconds")
+				time.sleep(20)
+				continue
+
 		df_live = pd.read_csv("scraped.csv")
 
 		y=0
